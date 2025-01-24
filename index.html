@@ -3,175 +3,159 @@
 <head>
   <meta charset="utf-8">
   <title>IceTown MVP</title>
-
-  <!-- Метатеги для мобільних пристроїв -->
-  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="format-detection" content="telephone=no">
-  <meta name="renderer" content="webkit"/>
-  <meta name="force-rendering" content="webkit"/>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-  <meta name="msapplication-tap-highlight" content="no">
-
-  <!-- Підключення стилів -->
-  <link rel="stylesheet" type="text/css" href="style.css"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <link rel="stylesheet" href="style.css">
   <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
-
   <style>
     body, html {
       margin: 0;
       padding: 0;
+      width: 100%;
       height: 100%;
       font-family: Arial, sans-serif;
     }
+
     #map {
       width: 100%;
-      height: calc(100% - 150px); /* Висота мапи з урахуванням верхнього та нижнього меню */
+      height: 100%;
+      position: absolute;
     }
 
-    /* Верхнє меню */
+    /* Верхня панель */
     .header {
-      background: #0044cc;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      padding: 10px;
-    }
-    .header-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .header-top button {
-      background: #0a74da;
-      border: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.7);
       color: white;
-      padding: 5px 10px;
-      border-radius: 5px;
-      font-size: 14px;
-    }
-    .header-bottom {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-top: 5px;
+      padding: 10px 20px;
     }
 
-    /* Футер */
-    .footer {
-      background: #002b80;
-      color: #fff;
-      padding: 10px;
+    .header .title {
+      font-size: 18px;
+      font-weight: bold;
     }
-    .footer .energy-bar {
+
+    .header .close-btn {
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .header .xp {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+    }
+
+    .header .xp .level {
+      margin-right: 10px;
+    }
+
+    /* Нижня панель */
+    .footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 10px 0;
+      text-align: center;
+    }
+
+    .footer .energy {
+      font-size: 14px;
       margin-bottom: 10px;
     }
+
     .footer .boosters {
       display: flex;
-      justify-content: space-between;
-    }
-    .footer .boosters div {
-      width: 30%;
-      height: 50px;
-      background: #0044cc;
-      border-radius: 10px;
-      display: flex;
       justify-content: center;
-      align-items: center;
-      color: #fff;
-      font-size: 16px;
+      gap: 10px;
+      margin-bottom: 10px;
     }
+
+    .footer .boosters button {
+      width: 50px;
+      height: 50px;
+      border: none;
+      border-radius: 5px;
+      background: blue;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
     .footer .menu {
       display: flex;
       justify-content: space-around;
-      margin-top: 10px;
     }
+
     .footer .menu button {
       background: none;
       border: none;
-      color: #fff;
-      font-size: 14px;
-    }
-    .footer .menu button.active {
-      font-weight: bold;
-      text-decoration: underline;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <!-- Верхнє меню -->
+  <!-- Карта -->
+  <div id="map"></div>
+
+  <!-- Верхня панель -->
   <div class="header">
-    <div class="header-top">
-      <button>Закрити</button>
-      <span>Ice Town</span>
-      <button>Меню</button>
-    </div>
-    <div class="header-bottom">
-      <span>Рівень: 42</span>
-      <span>@username</span>
-      <span>Монети: 100</span>
+    <div class="close-btn">×</div>
+    <div class="title">Ice Town</div>
+    <div class="xp">
+      <div class="level">Level: 42</div>
+      <div>@crypt0lord</div>
     </div>
   </div>
 
-  <!-- Контейнер для мапи -->
-  <div id="map"></div>
-
-  <!-- Футер -->
+  <!-- Нижня панель -->
   <div class="footer">
-    <div class="energy-bar">
-      <span>Energy refresh in... 29:59</span>
-      <span>0000/2000</span>
-    </div>
+    <div class="energy">Energy refresh in... 29:59</div>
     <div class="boosters">
-      <div>+</div>
-      <div>+</div>
-      <div>+</div>
+      <button>+</button>
+      <button>+</button>
+      <button>+</button>
     </div>
     <div class="menu">
-      <button class="active">Play to Earn</button>
+      <button>Play to Earn</button>
       <button>Store</button>
       <button>Leaderboards</button>
       <button>Profile</button>
     </div>
   </div>
 
-  <!-- Підключення MapBox JS -->
   <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
- <script>
-  mapboxgl.accessToken = 'pk.eyJ1IjoiaWNldG93biIsImEiOiJjbTY3dGN0NTYwNm1yMmtzOHRuczlqbnI3In0.QSvL3pbw9YdvjHar6uyJ7g';
+  <script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoiaWNldG93biIsImEiOiJjbTY3dGN0NTYwNm1yMmtzOHRuczlqbnI3In0.QSvL3pbw9YdvjHar6uyJ7g';
 
-  // Створення карти
-  const map = new mapboxgl.Map({
-    container: 'map',
-    style: 'mapbox://styles/mapbox/streets-v11',
-    center: [30.5234, 50.4501], // Початкові координати
-    zoom: 12
-  });
-
-  // Центрування на координатах користувача
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition((position) => {
-      const userCoordinates = [position.coords.longitude, position.coords.latitude];
-      
-      // Центрування карти на користувача з відповідним зумом
-      map.flyTo({
-        center: userCoordinates,
-        zoom: 17, // Масштаб для області ~50-100 метрів
-        essential: true // Анімація для пересування
-      });
-
-      // Додавання маркера на позицію користувача
-      new mapboxgl.Marker().setLngLat(userCoordinates).addTo(map);
-    }, () => {
-      console.error("Не вдалося отримати координати користувача");
+    // Створення карти
+    const map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/mapbox/streets-v11',
+      center: [30.5234, 50.4501],
+      zoom: 17,
+      scrollZoom: false,
+      doubleClickZoom: false,
+      touchZoomRotate: false
     });
-  } else {
-    console.error("Geolocation API не підтримується браузером");
-  }
-</script>
+
+    // Центрування на користувача
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const userCoordinates = [position.coords.longitude, position.coords.latitude];
+        map.setCenter(userCoordinates);
+        new mapboxgl.Marker().setLngLat(userCoordinates).addTo(map);
+      });
+    }
+  </script>
 </body>
 </html>
