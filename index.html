@@ -141,29 +141,37 @@
 
   <!-- Підключення MapBox JS -->
   <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
-  <script>
-    mapboxgl.accessToken = 'pk.eyJ1IjoiaWNldG93biIsImEiOiJjbTY3dGN0NTYwNm1yMmtzOHRuczlqbnI3In0.QSvL3pbw9YdvjHar6uyJ7g';
+ <script>
+  mapboxgl.accessToken = 'pk.eyJ1IjoiaWNldG93biIsImEiOiJjbTY3dGN0NTYwNm1yMmtzOHRuczlqbnI3In0.QSvL3pbw9YdvjHar6uyJ7g';
 
-    // Створення карти
-    const map = new mapboxgl.Map({
-      container: 'map',
-      style: 'mapbox://styles/mapbox/streets-v11',
-      center: [30.5234, 50.4501], // Початкові координати
-      zoom: 12
-    });
+  // Створення карти
+  const map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/streets-v11',
+    center: [30.5234, 50.4501], // Початкові координати
+    zoom: 12
+  });
 
-    // Центрування на координатах користувача
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        const userCoordinates = [position.coords.longitude, position.coords.latitude];
-        map.setCenter(userCoordinates);
-        new mapboxgl.Marker().setLngLat(userCoordinates).addTo(map); // Маркер на місці користувача
-      }, () => {
-        console.error("Не вдалося отримати координати користувача");
+  // Центрування на координатах користувача
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition((position) => {
+      const userCoordinates = [position.coords.longitude, position.coords.latitude];
+      
+      // Центрування карти на користувача з відповідним зумом
+      map.flyTo({
+        center: userCoordinates,
+        zoom: 17, // Масштаб для області ~50-100 метрів
+        essential: true // Анімація для пересування
       });
-    } else {
-      console.error("Geolocation API не підтримується браузером");
-    }
-  </script>
+
+      // Додавання маркера на позицію користувача
+      new mapboxgl.Marker().setLngLat(userCoordinates).addTo(map);
+    }, () => {
+      console.error("Не вдалося отримати координати користувача");
+    });
+  } else {
+    console.error("Geolocation API не підтримується браузером");
+  }
+</script>
 </body>
 </html>
