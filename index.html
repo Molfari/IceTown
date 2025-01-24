@@ -27,31 +27,51 @@
       top: 0;
       left: 0;
       width: 100%;
-      background: rgba(0, 0, 0, 0.7);
+      background: rgba(0, 0, 0, 0.8);
       color: white;
+      display: flex;
+      flex-direction: column;
+      z-index: 10;
+    }
+
+    .header .top-row, .header .bottom-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 10px 20px;
+      padding: 5px 10px;
     }
 
-    .header .title {
-      font-size: 18px;
-      font-weight: bold;
-    }
-
-    .header .close-btn {
+    .header .top-row .close-btn {
       font-size: 20px;
       cursor: pointer;
     }
 
-    .header .xp {
+    .header .top-row .menu-btn {
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .header .bottom-row {
+      font-size: 14px;
+    }
+
+    .header .bottom-row .level {
       display: flex;
       align-items: center;
     }
 
-    .header .xp .level {
-      margin-right: 10px;
+    .header .bottom-row .level .progress-bar {
+      width: 100px;
+      height: 5px;
+      background: gray;
+      margin-left: 5px;
+      position: relative;
+    }
+
+    .header .bottom-row .level .progress-bar .progress {
+      height: 5px;
+      background: green;
+      width: 60%; /* Прогрес у відсотках */
     }
 
     /* Нижня панель */
@@ -60,22 +80,24 @@
       bottom: 0;
       left: 0;
       width: 100%;
-      background: rgba(0, 0, 0, 0.7);
+      background: rgba(0, 0, 0, 0.8);
       color: white;
-      padding: 10px 0;
-      text-align: center;
+      display: flex;
+      flex-direction: column;
+      z-index: 10;
     }
 
     .footer .energy {
+      text-align: center;
       font-size: 14px;
-      margin-bottom: 10px;
+      margin: 5px 0;
     }
 
     .footer .boosters {
       display: flex;
       justify-content: center;
       gap: 10px;
-      margin-bottom: 10px;
+      margin: 5px 0;
     }
 
     .footer .boosters button {
@@ -92,6 +114,7 @@
     .footer .menu {
       display: flex;
       justify-content: space-around;
+      padding: 10px 0;
     }
 
     .footer .menu button {
@@ -109,11 +132,20 @@
 
   <!-- Верхня панель -->
   <div class="header">
-    <div class="close-btn">×</div>
-    <div class="title">Ice Town</div>
-    <div class="xp">
-      <div class="level">Level: 42</div>
+    <div class="top-row">
+      <div class="close-btn">×</div>
+      <div>Ice Town</div>
+      <div class="menu-btn">≡</div>
+    </div>
+    <div class="bottom-row">
+      <div class="level">
+        Level: 42
+        <div class="progress-bar">
+          <div class="progress"></div>
+        </div>
+      </div>
       <div>@crypt0lord</div>
+      <div>Coins: 120</div>
     </div>
   </div>
 
@@ -142,7 +174,7 @@
       container: 'map',
       style: 'mapbox://styles/mapbox/streets-v11',
       center: [30.5234, 50.4501],
-      zoom: 19,
+      zoom: 17,
       scrollZoom: false,
       doubleClickZoom: false,
       touchZoomRotate: false
