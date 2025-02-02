@@ -1,93 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uk">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
     <title>IceTown Map</title>
-    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
     <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            font-family: Arial, sans-serif;
-        }
-
-        #map {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-        }
-
-        .error-message {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            display: none;
-            z-index: 100;
-        }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; }
+        #map { width: 100%; height: 100%; position: absolute; }
     </style>
 </head>
 <body>
     <div id="map"></div>
-    <div id="error" class="error-message"></div>
 
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
     <script>
-        console.log("🔄 Початок ініціалізації мапи...");
-
         mapboxgl.accessToken = 'pk.eyJ1IjoiaWNldG93biIsImEiOiJjbTY3dGN0NTYwNm1yMmtzOHRuczlqbnI3In0.QSvL3pbw9YdvjHar6uyJ7g';
 
+        // Створюємо карту
         const map = new mapboxgl.Map({
             container: 'map',
             style: 'mapbox://styles/mapbox/streets-v11',
-            center: [30.5234, 50.4501], // Київ (за замовчуванням)
-            zoom: 17
+            center: [30.5234, 50.4501], // Початкові координати (Київ)
+            zoom: 17, 
+            scrollZoom: false,
+            doubleClickZoom: false,
+            touchZoomRotate: false
         });
 
-        map.on('load', () => {
-            console.log("✅ Мапа успішно завантажена");
-        });
+        // Фіксуємо масштаб, але дозволяємо рухати карту
+        map.on('wheel', (event) => event.preventDefault());
+        map.on('touchmove', (event) => event.preventDefault());
 
-        // Функція для виведення помилок
-        function showError(message) {
-            console.error(message);
-            const errorDiv = document.getElementById('error');
-            errorDiv.innerText = message;
-            errorDiv.style.display = "block";
+        // Оновлення геолокації кожні 30 секунд
+        function updateLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const userCoordinates = [position.coords.longitude, position.coords.latitude];
+                        console.log(`📍 Оновлено локацію: ${userCoordinates}`);
+                        map.setCenter(userCoordinates);
+                        new mapboxgl.Marker().setLngLat(userCoordinates).addTo(map);
+                    },
+                    (error) => {
+                        console.warn("⚠ Геолокацію заблоковано або недоступна.");
+                    }
+                );
+            }
         }
 
-        // Отримання геолокації користувача
-        if (navigator.geolocation) {
-            console.log("📡 Запит геолокації...");
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const userCoordinates = [position.coords.longitude, position.coords.latitude];
-                    console.log(`📍 Координати користувача: ${userCoordinates}`);
-                    map.setCenter(userCoordinates);
-                    new mapboxgl.Marker()
-                        .setLngLat(userCoordinates)
-                        .addTo(map);
-                },
-                (error) => {
-                    showError("❌ Неможливо отримати геолокацію: " + error.message);
-                },
-                {
-                    enableHighAccuracy: true, // Використовувати високоточні координати
-                    timeout: 10000, // Чекати не більше 10 сек
-                    maximumAge: 0 // Завжди отримувати свіжі координати
-                }
-            );
-        } else {
-            showError("❌ Ваш браузер не підтримує геолокацію.");
-        }
-
+        // Оновлення кожні 30 секунд
+        updateLocation();
+        setInterval(updateLocation, 30000);
     </script>
 </body>
 </html>
