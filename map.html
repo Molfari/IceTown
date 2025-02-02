@@ -1,47 +1,57 @@
 <!DOCTYPE html>
-<html>
+<html lang="uk">
 <head>
     <meta charset="utf-8">
     <title>IceTown Map</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
     <style>
-        html, body, #map {
-            width: 100vw;
-            height: 100vh;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-        }
-        
-        #map {
-            position: absolute;
-            top: 0;
-            left: 0;
-            background: rgba(0, 0, 0, 0);
-        }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; }
+        #map { width: 100%; height: 100%; position: absolute; }
     </style>
 </head>
 <body>
     <div id="map"></div>
+
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
     <script>
         mapboxgl.accessToken = 'pk.eyJ1IjoiaWNldG93biIsImEiOiJjbTY3dGN0NTYwNm1yMmtzOHRuczlqbnI3In0.QSvL3pbw9YdvjHar6uyJ7g';
 
+        // Створюємо карту
         const map = new mapboxgl.Map({
             container: 'map',
             style: 'mapbox://styles/mapbox/streets-v11',
-            center: [30.5234, 50.4501],
-            zoom: 17
+            center: [30.5234, 50.4501], // Початкові координати (Київ)
+            zoom: 17, 
+            scrollZoom: false,
+            doubleClickZoom: false,
+            touchZoomRotate: false
         });
 
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition((position) => {
-                const userCoordinates = [position.coords.longitude, position.coords.latitude];
-                map.setCenter(userCoordinates);
-                new mapboxgl.Marker().setLngLat(userCoordinates).addTo(map);
-            });
+        // Фіксуємо масштаб, але дозволяємо рухати карту
+        map.on('wheel', (event) => event.preventDefault());
+        map.on('touchmove', (event) => event.preventDefault());
+
+        // Оновлення геолокації кожні 30 секунд
+        function updateLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const userCoordinates = [position.coords.longitude, position.coords.latitude];
+                        console.log(`📍 Оновлено локацію: ${userCoordinates}`);
+                        map.setCenter(userCoordinates);
+                        new mapboxgl.Marker().setLngLat(userCoordinates).addTo(map);
+                    },
+                    (error) => {
+                        console.warn("⚠ Геолокацію заблоковано або недоступна.");
+                    }
+                );
+            }
         }
+
+        // Оновлення кожні 30 секунд
+        updateLocation();
+        setInterval(updateLocation, 30000);
     </script>
 </body>
 </html>
